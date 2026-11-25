@@ -1,0 +1,231 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kuis Islam Nusantara</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap">
+<style>
+/* Satu kolom: data peserta, 25 soal dengan bar progres menempel, lalu kartu nilai melingkar */
+:root{
+  --bg:#eef3f4; --card:#ffffff; --fg:#14272f; --muted:#546a73; --line:#cfdcdf;
+  --accent:#12557a; --on-accent:#ffffff; --soft:#e0eef5; --gold:#a9781c;
+  --good:#1d7447; --good-soft:#e0f2e8; --bad:#ad3434; --bad-soft:#f9e5e5;
+  --head:'Amiri',Georgia,serif; --body:'Plus Jakarta Sans',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d191f; --card:#14252d; --fg:#e6eff1; --muted:#9bb1b9; --line:#2a424d;
+  --accent:#6cc0e6; --on-accent:#08202c; --soft:#183645; --gold:#e0b355;
+  --good:#6fd39c; --good-soft:#143527; --bad:#f09090; --bad-soft:#3d1f22; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d191f; --card:#14252d; --fg:#e6eff1; --muted:#9bb1b9; --line:#2a424d;
+  --accent:#6cc0e6; --on-accent:#08202c; --soft:#183645; --gold:#e0b355;
+  --good:#6fd39c; --good-soft:#143527; --bad:#f09090; --bad-soft:#3d1f22; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body)}
+.wrap{max-width:680px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2{font-family:var(--head);line-height:1.3;margin:0;text-wrap:balance}
+h1{font-size:2.1rem} h2{font-size:1.7rem}
+header{text-align:center;margin-bottom:20px}
+header svg{display:block;margin:0 auto 6px;color:var(--gold)}
+header p{margin:4px 0 0;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+label.field{display:block;font-weight:700;margin-bottom:14px}
+input[type=text]{display:block;width:100%;margin-top:6px;padding:12px;font:16px var(--body);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px}
+button{font:700 16px var(--body);padding:13px 20px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent);cursor:pointer;width:100%}
+button.ghost{background:transparent;color:var(--accent)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.error{color:var(--bad);font-weight:700;margin:0 0 12px}
+.progress{position:sticky;top:env(safe-area-inset-top,0px);z-index:11;background:var(--bg);padding-block:10px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:12;background:var(--bg)}
+.progress div:first-child{display:flex;justify-content:space-between;gap:12px;font-size:.875rem;color:var(--muted)}
+.progress span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.progress span:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:3px;background:var(--line);margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent)}
+fieldset{border:1px solid var(--line);background:var(--card);border-radius:12px;margin:0 0 14px;padding:16px;min-width:0;scroll-margin-top:70px}
+fieldset.missing{border-color:var(--bad);border-width:2px}
+legend{float:left;width:100%;padding:0;margin-bottom:12px;font-weight:700}
+legend+*{clear:both}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-top:8px;cursor:pointer}
+.opt input{margin:5px 0 0;accent-color:var(--accent);flex:none}
+.opt span{min-width:0}
+.opt:has(input:checked){background:var(--soft);border-color:var(--accent)}
+.result{text-align:center}
+.result h2{color:var(--accent)}
+.who{font-size:1.3rem;font-weight:700;margin:14px 0 0;overflow-wrap:anywhere}
+.meta{color:var(--muted);margin:0;font-size:.9rem}
+.score{width:190px;height:190px;margin:20px auto;border-radius:50%;display:grid;place-content:center;border:3px double var(--gold);outline:8px solid var(--soft);outline-offset:-18px}
+.score small{color:var(--muted);font-weight:700}
+.score b{font:700 4.4rem/1.1 var(--head);font-variant-numeric:tabular-nums}
+.tally{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.tally span{padding:6px 14px;border-radius:20px;font-weight:700}
+.ok{background:var(--good-soft);color:var(--good)}
+.no{background:var(--bad-soft);color:var(--bad)}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:8px 0 20px;padding:0;list-style:none}
+.grid li{border-radius:8px;padding:6px 0;font-weight:700;font-variant-numeric:tabular-nums}
+</style>
+
+<main class="wrap">
+  <header>
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="10" y="10" width="24" height="24"/><rect x="10" y="10" width="24" height="24" transform="rotate(45 22 22)"/><circle cx="22" cy="22" r="6"/></svg>
+    <h1>Kuis Islam Nusantara</h1>
+    <p>Masuknya Islam, Wali Sanga, dan Pesantren · 25 soal pilihan ganda</p>
+  </header>
+
+  <form id="start" class="card" novalidate>
+    <label class="field" for="nama">Nama lengkap
+      <input type="text" id="nama" maxlength="60" autocomplete="name">
+    </label>
+    <label class="field" for="kelas">Kelas (boleh dikosongkan)
+      <input type="text" id="kelas" maxlength="20">
+    </label>
+    <p class="meta" style="margin-bottom:14px">Pilih satu jawaban untuk setiap soal. Setiap jawaban benar bernilai 4, nilai tertinggi 100. Urutan soal diacak untuk setiap peserta.</p>
+    <p class="error" id="nameError" role="alert" hidden>Tulis nama lengkap dulu sebelum mulai.</p>
+    <button type="submit">Mulai mengerjakan</button>
+  </form>
+
+  <form id="quiz" novalidate hidden>
+    <div class="progress">
+      <div><span id="pName"></span><span id="pCount"></span></div>
+      <div class="bar"><i id="pBar"></i></div>
+    </div>
+    <div id="questions"></div>
+    <p class="error" id="quizError" role="alert" hidden></p>
+    <button type="submit">Kirim jawaban dan lihat nilai</button>
+  </form>
+
+  <section id="result" class="card result" tabindex="-1" hidden>
+    <h2>Selamat, kamu sudah menyelesaikan soal!</h2>
+    <p class="who" id="rName"></p>
+    <p class="meta" id="rClass"></p>
+    <div class="score"><small>Nilai</small><b id="rScore"></b><small>dari 100</small></div>
+    <div class="tally"><span class="ok" id="rRight"></span><span class="no" id="rWrong"></span></div>
+    <p class="meta">Hasil per nomor (✓ benar, ✗ salah)</p>
+    <ol class="grid" id="rGrid"></ol>
+    <p class="meta" id="rTime"></p>
+    <p style="margin:8px 0 20px">Tangkap layar (screenshot) halaman ini, lalu kirimkan kepada guru.</p>
+    <button type="button" class="ghost" id="again">Ganti peserta</button>
+  </section>
+</main>
+
+<script>
+// [soal, [a, b, c, d], indeks jawaban benar]
+const Q = [
+["Sebelum Islam datang, masyarakat Nusantara telah memiliki kepercayaan dan tradisi yang beragam. Kepercayaan yang banyak dianut masyarakat pada masa itu antara lain ....",["animisme dan dinamisme","ateisme dan sekularisme","Protestan dan Katolik","Shinto dan Taoisme"],0],
+["Salah satu jalur yang berperan penting dalam proses masuknya Islam ke Nusantara adalah ....",["perlombaan antarkerajaan","perdagangan melalui jalur laut","penaklukan seluruh wilayah","pemindahan penduduk secara paksa"],1],
+["Teori Gujarat menjelaskan bahwa Islam masuk ke Nusantara melalui perantara pedagang Muslim dari ....",["Mesir","Persia","Gujarat di India","Turki"],2],
+["Salah satu bukti yang sering dikaitkan dengan teori Persia dalam masuknya Islam ke Nusantara adalah adanya kesamaan tradisi ....",["perayaan Tabut/Tabuik dengan tradisi Persia","upacara Ngaben dengan tradisi Arab","Sekaten dengan tradisi Eropa","karapan sapi dengan tradisi India"],0],
+["Corak keislaman di Indonesia berkembang dengan memperhatikan kondisi masyarakat setempat. Sikap tersebut menunjukkan bahwa dakwah Islam dilakukan dengan cara ....",["memaksa masyarakat meninggalkan seluruh budaya","menghapus semua bahasa daerah","menolak hubungan sosial dengan masyarakat","bijaksana dan menyesuaikan pendekatan selama tidak bertentangan dengan ajaran Islam"],3],
+["Kerajaan Islam yang dikenal sebagai salah satu kerajaan Islam awal di wilayah Aceh adalah ....",["Majapahit","Samudra Pasai","Singasari","Tarumanegara"],1],
+["Peran kerajaan-kerajaan Islam dalam penyebaran Islam di Indonesia antara lain ....",["membatasi kegiatan pendidikan agama","menutup hubungan antarpulau","mendukung dakwah, pendidikan, dan kegiatan keagamaan","melarang perdagangan dengan wilayah lain"],2],
+["Sikap teladan yang dapat diambil dari para ulama penyebar Islam di Indonesia adalah ....",["santun, sabar, dan menghargai masyarakat","mudah menyalahkan orang lain","mengutamakan kepentingan pribadi","menyebarkan agama dengan paksaan"],0],
+["Wali Sanga adalah sebutan bagi ....",["sembilan raja di wilayah Sumatra","sembilan panglima perang","sembilan ulama yang berperan dalam dakwah Islam di Jawa","sembilan pedagang dari Gujarat"],2],
+["Salah satu tujuan dakwah Wali Sanga adalah ....",["mengembangkan ajaran Islam di tengah masyarakat","menguasai perdagangan dunia","mengganti seluruh adat dengan budaya asing","membentuk kerajaan di setiap desa"],0],
+["Sunan Gresik atau Maulana Malik Ibrahim dikenal sebagai tokoh yang berdakwah dengan pendekatan ....",["peperangan dan pemaksaan","perdagangan senjata","pengasingan masyarakat","sosial, pendidikan, dan membantu masyarakat"],3],
+["Sunan Kalijaga dikenal menggunakan media seni dan budaya dalam berdakwah, salah satunya melalui ....",["wayang","opera Barat","balet","musik elektronik"],0],
+["Sunan Kudus menunjukkan sikap menghargai masyarakat yang beragam. Salah satu contoh yang sering dikaitkan dengan pendekatan dakwahnya adalah ....",["melarang semua tradisi setempat","menggunakan pendekatan budaya secara bijaksana","menutup tempat ibadah masyarakat lain","menghindari komunikasi dengan penduduk"],1],
+["Sunan Drajat dikenal menekankan dakwah yang berkaitan dengan ....",["kemewahan hidup","persaingan kekuasaan","kepedulian sosial dan membantu kaum lemah","pengumpulan harta pribadi"],2],
+["Sunan Giri memiliki peran penting dalam dakwah melalui ....",["pengembangan pendidikan dan kaderisasi pendakwah","pembangunan armada penjajah","penutupan lembaga pendidikan","pelarangan kegiatan belajar"],0],
+["Mengapa Wali Sanga menggunakan berbagai pendekatan dalam berdakwah?",["agar ajaran Islam hanya dipahami kalangan bangsawan","supaya masyarakat takut kepada pendakwah","untuk menghilangkan seluruh kebudayaan Nusantara","agar pesan Islam lebih mudah diterima oleh masyarakat yang beragam"],3],
+["Contoh penerapan metode dakwah Wali Sanga di lingkungan sekolah adalah ....",["mengejek teman yang berbeda kebiasaan","menyampaikan nasihat dengan santun dan memberi contoh baik","memaksa teman mengikuti pendapat kita","menyebarkan informasi tanpa memeriksa kebenarannya"],1],
+["Pondok pesantren merupakan lembaga pendidikan Islam yang umumnya memiliki unsur utama berupa ....",["pesantren, santri, kiai, masjid, dan pembelajaran kitab","pabrik, pekerja, dan mesin","pasar, pedagang, dan pembeli","istana, raja, dan prajurit"],0],
+["Orang yang belajar atau menuntut ilmu di pondok pesantren disebut ....",["saudagar","abdi dalem","santri","hulubalang"],2],
+["Tokoh yang menjadi pengasuh dan pembimbing utama santri di pesantren biasanya disebut ....",["adipati","kiai","syahbandar","panglima"],1],
+["Salah satu peran pesantren dalam menjaga keaslian Indonesia adalah ....",["mengajarkan santri menjauhi masyarakat","menolak semua tradisi daerah","membatasi pendidikan hanya untuk kelompok tertentu","mengembangkan pendidikan Islam sekaligus menanamkan nilai kebangsaan dan cinta tanah air"],3],
+["Pesantren disebut sebagai pencetak para dai karena ....",["membekali santri dengan ilmu agama dan kemampuan menyampaikan dakwah","hanya mengajarkan keterampilan berdagang","melatih santri menjadi pejabat kerajaan","tidak memberikan pembelajaran agama"],0],
+["Salah satu sikap yang perlu dimiliki seorang dai lulusan pesantren ketika berdakwah di tengah masyarakat adalah ....",["keras dan merendahkan orang lain","memaksakan pendapat","santun, berilmu, dan menjadi teladan","mengutamakan popularitas"],2],
+["Jika di lingkungan sekitar terdapat perbedaan praktik keagamaan, sikap yang sesuai dengan nilai pendidikan pesantren adalah ....",["langsung menyalahkan pihak lain","berdialog dengan santun dan merujuk pada ilmu","menyebarkan kebencian","memutus hubungan pertemanan"],1],
+["Bagaimana cara pelajar meneladani peran pesantren sebagai lembaga pendidikan dan pencetak dai?",["belajar hanya untuk memperoleh nilai","menghindari kegiatan sosial","menolak nasihat guru","tekun belajar, mengamalkan ilmu, dan menyampaikan kebaikan dengan santun"],3]
+];
+const KEY = "kuis-islam-nusantara";
+const $ = id => document.getElementById(id);
+let state = {name:"", kelas:"", answers:Array(Q.length).fill(null), stage:"start", time:"", order:[]};
+try {
+  const s = JSON.parse(localStorage.getItem(KEY));
+  if (s && Array.isArray(s.answers) && s.answers.length === Q.length && Array.isArray(s.order) && (s.stage === "start" || s.order.length === Q.length)) state = s;
+} catch (e) {}
+function shuffled(){
+  const a = Q.map((_, i) => i);
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+function buildQuestions(){
+  const box = $("questions"); box.textContent = "";
+  state.order.forEach((i, pos) => {
+    const [text, opts] = Q[i];
+    const fs = document.createElement("fieldset"); fs.id = "s" + i;
+    const lg = document.createElement("legend"); lg.textContent = (pos+1) + ". " + text; fs.append(lg);
+    opts.forEach((o, j) => {
+      const l = document.createElement("label"); l.className = "opt";
+      const r = document.createElement("input");
+      r.type = "radio"; r.name = "q" + i; r.id = "q" + i + "-" + j; r.value = j;
+      r.checked = state.answers[i] === j;
+      r.addEventListener("change", () => {
+        state.answers[i] = j; fs.classList.remove("missing"); $("quizError").hidden = true; save(); progress();
+      });
+      const t = document.createElement("span"); t.textContent = "abcd"[j] + ". " + o;
+      l.append(r, t); fs.append(l);
+    });
+    box.append(fs);
+  });
+}
+function progress(){
+  const n = state.answers.filter(a => a !== null).length;
+  $("pName").textContent = state.name;
+  $("pCount").textContent = n + " dari " + Q.length + " dijawab";
+  $("pBar").style.width = (n / Q.length * 100) + "%";
+}
+function showResult(){
+  const marks = state.order.map(i => state.answers[i] === Q[i][2]);
+  const right = marks.filter(Boolean).length;
+  $("rName").textContent = state.name;
+  $("rClass").textContent = state.kelas ? "Kelas " + state.kelas.replace(/^kelas\s+/i, "") : "";
+  $("rScore").textContent = Math.round(right / Q.length * 100);
+  $("rRight").textContent = "Benar: " + right;
+  $("rWrong").textContent = "Salah: " + (Q.length - right);
+  $("rGrid").textContent = "";
+  marks.forEach((m, i) => {
+    const li = document.createElement("li"); li.className = m ? "ok" : "no";
+    li.textContent = (i+1) + (m ? " ✓" : " ✗"); $("rGrid").append(li);
+  });
+  $("rTime").textContent = "Dikirim: " + state.time;
+}
+function render(){
+  $("start").hidden = state.stage !== "start";
+  $("quiz").hidden = state.stage !== "quiz";
+  $("result").hidden = state.stage !== "result";
+  $("nama").value = state.name; $("kelas").value = state.kelas;
+  if (state.stage === "quiz") { buildQuestions(); progress(); }
+  if (state.stage === "result") showResult();
+}
+$("start").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = $("nama").value.trim();
+  if (!name) { $("nameError").hidden = false; $("nama").focus(); return; }
+  $("nameError").hidden = true;
+  state.name = name; state.kelas = $("kelas").value.trim(); state.stage = "quiz"; state.order = shuffled();
+  save(); render(); window.scrollTo(0, 0);
+});
+$("quiz").addEventListener("submit", e => {
+  e.preventDefault();
+  const missing = state.order.map((i, pos) => state.answers[i] === null ? pos : -1).filter(p => p >= 0);
+  if (missing.length) {
+    missing.forEach(i => $("s" + state.order[i]).classList.add("missing"));
+    $("quizError").textContent = "Masih ada soal yang belum dijawab: nomor " + missing.map(i => i+1).join(", ") + ".";
+    $("quizError").hidden = false;
+    $("s" + state.order[missing[0]]).scrollIntoView({block:"start"});
+    $("q" + state.order[missing[0]] + "-0").focus({preventScroll:true});
+    return;
+  }
+  state.stage = "result";
+  state.time = new Date().toLocaleString("id-ID", {dateStyle:"long", timeStyle:"short"});
+  save(); render(); window.scrollTo(0, 0); $("result").focus({preventScroll:true});
+});
+$("again").addEventListener("click", () => {
+  state = {name:"", kelas:"", answers:Array(Q.length).fill(null), stage:"start", time:"", order:[]};
+  save(); render(); window.scrollTo(0, 0);
+});
+render();
+</script>
+
+</body></html>
